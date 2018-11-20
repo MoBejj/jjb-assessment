@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "VirtualNetworkName": {
+            "value": "sentia-vNet01"
+        },
+        "StorageAccount_Prefix": {
+            "value": "sentia"
+        },
+        "NumberOfSubnets": {
+            "value": 6
+        }
+    }
+}

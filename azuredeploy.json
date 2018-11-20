@@ -1,0 +1,89 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+  "VirtualNetworkName": {
+  "type": "string",
+  "defaultValue": "sentia-vNet01",
+  "metadata": {
+      "description": "Enter the name of the Virtual Network"
+  }
+  },
+  "NumberOfSubnets": {
+  "type": "int",
+  "defaultValue": 3,
+  "metadata": {
+  "description": "Enter number of subnets in the Virtual Network"
+  }
+  },
+  "StorageAccount_Prefix": {
+  "type": "string",
+  "defaultValue": "sentia",
+  "metadata": {
+      "description": "Enter Storage prefix "
+  }
+  }
+  },
+  "variables": {
+  "VirtualNetAddress_Prefix": "172.16.0.0/12",
+  "SubNetName_Prefix": "sentia-Subnet",
+  "Subnet_Prefix": "172.16.",
+  "storageAccountName":"[toLower( concat(parameters('StorageAccount_Prefix'), uniqueString(resourceGroup().id)))]"
+  },
+  "resources": [
+  {
+  "type": "Microsoft.Network/virtualNetworks",
+  "name": "[parameters('VirtualNetworkName')]",
+  "apiVersion": "2018-08-01",
+  "location": "[resourceGroup().location]",
+  "properties": {
+      "addressSpace": {
+          "addressPrefixes": [
+              "[variables('VirtualNetAddress_Prefix')]"
+          ]
+      },
+      "copy": [
+          {
+              "name": "subnets",
+              "count": "[parameters('NumberOfSubnets')]",
+              "input": {
+                  "name": "[concat(variables('SubNetName_Prefix'), copyIndex('subnets'))]",
+                  "properties": {
+                      "addressPrefix": "[concat(variables('Subnet_Prefix'), copyIndex('subnets'), '.0/24')]"
+                  }
+              }
+          }
+      ]
+
+  }
+  },
+  {
+  "type": "Microsoft.Storage/storageAccounts",
+  "name": "[variables('storageAccountName')]",
+  "apiVersion": "2018-07-01",
+  "location": "[resourceGroup().location]",
+  "sku": {
+      "name": "Standard_LRS",
+      "tier": "Standard"
+  },
+  "kind": "StorageV2",
+  "properties": {
+      "supportsHttpsTrafficOnly": true,
+      "encryption": {
+          "services": {
+              "file": {
+                  "enabled": true
+              },
+              "blob": {
+                  "enabled": true
+              }
+          },
+          "keySource": "Microsoft.Storage"
+      },
+      "accessTier": "Hot"
+  }
+  }
+
+  ],
+  "outputs": {}
+}
