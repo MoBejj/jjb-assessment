@@ -38,4 +38,4 @@ az policy definition create --name 'allowed-resourcetypes' --display-name 'Allow
 az policy assignment create --name 'allowed-resourcetypes-assignment' --scope `echo $scope_rg | jq '.id' -r` --policy allowed-resourcetypes 
 
 # Assign policy to Subscription
-az policy assignment create --name 'allowed-resourcetypes-assignment-sub' --scope `echo $scope_sub` --policy allowed-resourcetypes 
+# az policy assignment create --name 'allowed-resourcetypes-assignment-sub' --scope `echo $scope_sub` --policy allowed-resourcetypes 
